@@ -1,14 +1,18 @@
 <template lang="pug">
 div
-    b-table(:data='value' :checked-rows.sync='checkedRows' checkable)
+    b-table(:data='value' :checked-rows.sync='checkedRows' checkable :mobile-cards='false')
         template(slot-scope='props')
             b-table-column(key=0 label='Ingredients' visible=true)
                 span {{ props.row }}
             b-table-column(key=1 label='' :visible='editing')
                 a.delete(@click='onDelete')
-    form(@submit.prevent='addIngredient')
+        template(slot='empty')
+            td(colspan=2) No ingredients added
+    div
         b-field.add(v-if='editing')
-            b-input(placeholder='Add ingredient' icon='playlist-plus' v-model='ingredient')
+            b-input(placeholder='Add ingredients (one per line)' v-model='ingredientsToAdd' type='textarea')
+        b-field.add(v-if='editing')
+            b-button(type='is-primary' icon-left='playlist-plus' @click='addIngredients') Add ingredients
 </template>
         
 
@@ -20,13 +24,17 @@ export default class CookbookRecipeIngredients extends Vue {
     @Prop(Boolean) private readonly editing: boolean | undefined;
     @Prop({ default: [] }) private readonly value!: string[];
 
-    private ingredient = '';
+    private ingredientsToAdd = '';
 
     private checkedRows = [];
 
-    private addIngredient(e: Event) {
-        this.value.push(this.ingredient);
-        this.ingredient = '';
+    private addIngredients(e: Event) {
+        this.ingredientsToAdd.match(/[^\r\n]+/g)!.forEach((ingredient) => {
+            if (ingredient && ingredient.length > 0) {
+                this.value.push(ingredient);
+            }
+        });
+        this.ingredientsToAdd = '';
     }
 
     private onDelete(e: Event) {

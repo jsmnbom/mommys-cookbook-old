@@ -12,10 +12,7 @@
 <script lang='ts'>
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
-// @ts-ignore
-import { Dialog } from 'buefy/dist/components/dialog';
-// @ts-ignore
-import { NotificationProgrammatic as Notification } from 'buefy/dist/components/notification';
+import {notificationSuccess, dialogAlert} from '../utils';
 
 import firebase from '../firebase';
 import { UserInfo } from 'firebase';
@@ -24,55 +21,44 @@ import { UserInfo } from 'firebase';
 export default class Login extends Vue {
     private user: UserInfo | null = null;
 
+    // Vetur doesn't have proper type for $store stuff
+    [x: string]: any;
     private loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().signInWithPopup(provider).then((result) => {
-            // @ts-ignore
-            const token = result!.credential!.accessToken;
-            this.user = result.user!;
-            Notification.open({
-                message: `Successfully logged in to ${this.user.email}!`,
-                type: 'is-success',
-            });
+            // // @ts-ignore
+            // const token = result!.credential!.accessToken;
+            this.$store.user = result.user!;
+            notificationSuccess(`Successfully logged in to ${this.$store.user!.email}!`);
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             const email = error.email;
             const credential = error.credential;
-            Dialog.alert({
-                message: `Could not login.\n${errorMessage}\nError code: ${errorCode}`,
-                type: 'is-danger',
-                hasIcon: true,
-                icon: 'alert-circle',
-            });
+            dialogAlert(`Could not login.\n${errorMessage}\nError code: ${errorCode}`);
         });
     }
 
     private logout() {
         firebase.auth().signOut().then(() => {
-            Notification.open({
-                message: 'Successfully signed out!',
-                type: 'is-success',
-            });
+            notificationSuccess('Successfully signed out!');
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            Dialog.alert({
-                message: `Could not logout.\n${errorMessage}\nError code: ${errorCode}`,
-                type: 'is-danger',
-                hasIcon: true,
-                icon: 'alert-circle',
-            });
+            dialogAlert(`Could not logout.\n${errorMessage}\nError code: ${errorCode}`);
         });
-
     }
 
     private created() {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 this.user = user;
+                this.$store.user = user;
+                console.log(this.$store);
             } else {
                 this.user = null;
+                this.$store.user = null;
+                console.log(this.$store);
             }
         });
     }

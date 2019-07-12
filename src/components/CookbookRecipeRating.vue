@@ -3,9 +3,10 @@ div.parent
     b-tooltip(:label='title' position='is-bottom' animated)
         div.rating
             b-icon(:icon='icon' size='is-large')
-            span.score.is-size-3 {{ rating }}
-            span.slash /
-            span.total 10
+            div
+                span.score.is-size-3 {{ rating }}
+                span.slash /
+                span.total 10
 </template>
 
 
@@ -30,8 +31,8 @@ export default class CookbookRecipeRating extends Vue {
 }
 
 .rating {
+    display: block;
     flex: 1;
-    display: flex;
     flex-direction: row;
     align-items: center;
 }
@@ -44,6 +45,11 @@ export default class CookbookRecipeRating extends Vue {
 .slash,
 .total {
     padding-top: 0.5rem;
+}
+@media (min-width: 1023px) {
+    .rating {
+        display: flex;
+    }
 }
 </style>
 

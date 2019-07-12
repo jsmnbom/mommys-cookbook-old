@@ -2,21 +2,22 @@
 nav.navbar.has-shadow.is-spaced.is-light(role='navigation' aria-label='main navigation')
     .container
         .navbar-brand
-            a.navbar-item(href='/')
+            router-link.navbar-item(:to="{ name: 'home' }" exact-active-class='')
                 b-icon(icon='book-open-page-variant')
                 p.title Mommy's Cookbook
             
-            a.navbar-burger.burger(role='button' aria-label='menu' aria-expanded='false' data-target='navbar')
+            a.navbar-burger.burger(role='button' aria-label='menu' aria-expanded='false' data-target='navbar' @click='burgerIsActive = !burgerIsActive;' :class='{"is-active": burgerIsActive}')
                 span(aria-hidden=true)
                 span(aria-hidden=true)
                 span(aria-hidden=true)
-        .navbar-start
-            a.navbar-item(href='/') Home
-            a.navbar-item(href='/') About
-        
-        .navbar-end
-            .navbar-item
-                LoginWidget
+        .navbar-menu(:class='{"is-active": burgerIsActive}')
+            .navbar-start
+                router-link.navbar-item(:to="{ name: 'home' }") Home
+                router-link.navbar-item(:to="{ name: 'library' }" v-if='$store.user') My cookbooks
+            
+            .navbar-end
+                .navbar-item
+                    LoginWidget
 </template>
 
 <script lang='ts'>
@@ -29,7 +30,9 @@ import LoginWidget from './LoginWidget.vue';
         LoginWidget,
     },
 })
-export default class Navbar extends Vue { }
+export default class Navbar extends Vue {
+    private burgerIsActive = false;
+}
 </script>
 
 

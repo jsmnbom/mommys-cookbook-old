@@ -1,9 +1,7 @@
 <template lang="pug">
 #app
     NavbarWidget
-    .section
-        .container
-            router-view
+    router-view
         
 </template>
 
