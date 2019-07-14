@@ -7,7 +7,7 @@ section.section
             .level-right
                 b-button.level-item(type='is-primary' icon-left='plus-circle' @click='newRecipe') New recipe
         div.recipeContainer(v-for='(recipe, key) in recipes')
-            CookbookRecipe(v-model='recipes[key]' :id='key' @refresh='fetchData' :allowEdit='allowRecipeEdit' :allowDelete='allowRecipeDelete')
+            CookbookRecipe(v-model='recipes[key]' :id='key' @refresh='fetchData' :allowEdit='allowRecipeEdit' :allowDelete='allowRecipeDelete' :tags='tags')
     b-loading(:active='!cookbook' isFullPage)
 </template>
         
@@ -83,14 +83,18 @@ export default class CookbookItem extends Vue {
         db.collection('recipes').where('cookbookId', '==', id).onSnapshot(inner);
     }
 
-    private get allowRecipeEdit() {
+    private get allowRecipeEdit(): boolean {
         if (this.cookbook) return this.cookbook!.authorUid === this.$store.user!.uid || this.cookbook!.sharedWith.includes(this.$store.user!.email!);
         return false;
     }
 
-    private get allowRecipeDelete() {
+    private get allowRecipeDelete(): boolean {
         if (this.cookbook) return this.cookbook!.authorUid === this.$store.user!.uid;
         return false;
+    }
+
+    private get tags(): string[] {
+        return Array.from(new Set(Object.values(this.recipes).map((recipe) => recipe.tags).flat()));
     }
 }
 </script>

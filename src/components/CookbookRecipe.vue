@@ -33,7 +33,7 @@ section.recipe
                     b-field(label='Subtitle' labelPosition='on-border' v-if='editing')
                         b-input(v-model.trim='value.subtitle')
                     b-field(label='Tags' labelPosition='on-border' v-if='editing')
-                        b-taginput(v-model='value.tags' ellipsis icon='label' placeholder='Add a tag')
+                        b-taginput(v-model='value.tags' ellipsis icon='label' placeholder='Add a tag' autocomplete :allow-new='true' :data='filteredTags' @typing='filterTags')
                     br( v-if='editing')
                     CookbookRecipeIngredients(:editing='editing' v-model='value.ingredients')
                     br( v-if='editing')
@@ -85,10 +85,19 @@ dayjs.extend(relativeTime);
     },
 })
 export default class CookbookRecipe extends Vue {
-    @Prop(RecipeValue) private readonly value!: RecipeValue;
-    @Prop(String) private readonly id!: string;
-    @Prop(Boolean) private readonly allowEdit!: boolean;
-    @Prop(Boolean) private readonly allowDelete!: boolean;
+    @Prop({ type: RecipeValue, required: true }) private readonly value!: RecipeValue;
+    @Prop({ type: String, required: true }) private readonly id!: string;
+    @Prop({ type: Boolean, required: true }) private readonly allowEdit!: boolean;
+    @Prop({ type: Boolean, required: true }) private readonly allowDelete!: boolean;
+    @Prop({ type: Array, required: true }) private readonly tags!: string[];
+
+    private filteredTags: string[] = [];
+
+    private filterTags(text: string) {
+        this.filteredTags = this.tags.filter((tag) => {
+            return tag.toLowerCase().indexOf(text.toLowerCase()) >= 0 && !this.value.tags.includes(tag);
+        });
+    }
 
     private editing = false;
     private get total() {
@@ -100,7 +109,7 @@ export default class CookbookRecipe extends Vue {
     }
 
     private toggleEdit() {
-        if (this.editing) {
+        if (this.editing) {return
             // Save
             db.collection('recipes').doc(this.id).update(this.value.toObject()).then(() => {
                 notificationSuccess('Recipe successfully updated!');
