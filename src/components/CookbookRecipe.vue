@@ -111,6 +111,7 @@ export default class CookbookRecipe extends Vue {
     private toggleEdit() {
         if (this.editing) {
             // Save
+            this.value.lastEdited = new Date();
             db.collection('recipes').doc(this.id).update(this.value.toObject()).then(() => {
                 notificationSuccess('Recipe successfully updated!');
             }).catch((error) => {
