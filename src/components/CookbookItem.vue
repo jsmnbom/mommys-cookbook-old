@@ -4,7 +4,7 @@ section.section
         .level
             .level-left
                 h1.title.level-item Recipes in {{ cookbook ? cookbook.title : ''}}
-            .level-right
+            .level-right.header-button-container
                 b-dropdown.level-item(aria-role='list')
                     button.button.is-info.is-outlined(slot='trigger')
                         b-icon(v-if='sortDirection == 0' icon='sort-descending')
@@ -16,11 +16,11 @@ section.section
                 b-dropdown.level-item.tag-dropdown(aria-role='list')
                     button.button.is-info.is-outlined(slot='trigger')
                         b-icon(icon='tag')
-                        span Tag filter
+                        span {{ filteredTags.length > 0 ? `Tag filter (${filteredTags.length})` : 'Tag filter' }}
                         b-icon(icon='menu-down')
                     b-dropdown-item(aria-role='listitem' :focusable="false" custom v-for='tag in tags' :key='tag')
                         b-checkbox(:native-value='tag' v-model='filteredTags') {{ tag }}
-                div.level-item
+                div.level-item.has-button
                     b-button(type='is-primary' icon-left='plus-circle' @click='newRecipe') New recipe
 
         div.recipeContainer(v-for='[key, recipe] in recipes')
@@ -248,12 +248,23 @@ export default class CookbookItem extends Vue {
 <style scoped>
 .recipeContainer {
     margin-bottom: 2rem;
-    margin-top: 2rem;
 }
 @media (min-width: 1023px) {
     .tag-dropdown >>> .dropdown-content {
         max-height: 20rem;
         overflow-y: auto;
+    }
+}
+.header-button-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+@media (max-width: 769px) {
+    .header-button-container >>> .level-item.has-button {
+        margin-left: 0.5em;
+        margin-bottom: 0.75rem;
     }
 }
 </style>
