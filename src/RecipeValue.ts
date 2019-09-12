@@ -14,6 +14,7 @@ export default class RecipeValue {
         },
         cookbookId: string,
         lastEaten: firestore.Timestamp | null,
+        lastEdited: firestore.Timestamp | null
     } | firestore.DocumentData) {
         return new this(
             data.title,
@@ -24,6 +25,7 @@ export default class RecipeValue {
             { ...data.ratings },
             data.cookbookId,
             data.lastEaten ? data.lastEaten.toDate() : null,
+            data.lastEdited ? data.lastEdited.toDate() : null,
         );
     }
 
@@ -40,6 +42,7 @@ export default class RecipeValue {
         },
         public cookbookId: string,
         public lastEaten: Date | null,
+        public lastEdited: Date | null,
     ) { }
 
     public toObject() {
@@ -52,6 +55,7 @@ export default class RecipeValue {
             ratings: this.ratings,
             cookbookId: this.cookbookId,
             lastEaten: this.lastEaten,
+            lastEdited: this.lastEdited,
         };
     }
 
