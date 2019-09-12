@@ -109,7 +109,7 @@ export default class CookbookRecipe extends Vue {
     }
 
     private toggleEdit() {
-        if (this.editing) {return
+        if (this.editing) {
             // Save
             db.collection('recipes').doc(this.id).update(this.value.toObject()).then(() => {
                 notificationSuccess('Recipe successfully updated!');
@@ -226,5 +226,12 @@ export default class CookbookRecipe extends Vue {
         flex-direction: column;
         align-items: center;
     }
+    .tags {
+        justify-content: center;
+    }
+    .card-header-icon {
+        padding: 0;
+    }
 }
+
 </style>
