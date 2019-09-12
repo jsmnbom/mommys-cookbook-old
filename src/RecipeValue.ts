@@ -14,7 +14,7 @@ export default class RecipeValue {
         },
         cookbookId: string,
         lastEaten: firestore.Timestamp | null,
-        lastEdited: firestore.Timestamp | null
+        lastEdited: firestore.Timestamp | null,
     } | firestore.DocumentData) {
         return new this(
             data.title,

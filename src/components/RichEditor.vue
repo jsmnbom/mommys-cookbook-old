@@ -79,7 +79,7 @@ export default class RichEditor extends Vue {
     }
 
     private onTextChange(delta: any, oldContents: any, source: any) {
-        if (source === "user") {
+        if (source === 'user') {
             // @ts-ignore
             const currrentContents = this.$refs.editor.quill.getContents();
             const removedDelta = currrentContents.diff(oldContents);
@@ -91,7 +91,9 @@ export default class RichEditor extends Vue {
                     deleteFileFromDownloadURL(downloadURL).catch((error) => {
                         dialogAlert(`Error compressing image: ${error}`);
                     });
-                } catch (_error) { }
+                } catch (e) {
+                    console.error(e);
+                }
             });
         }
     }

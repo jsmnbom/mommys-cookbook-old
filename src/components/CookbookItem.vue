@@ -18,7 +18,7 @@ section.section
                         b-icon(icon='tag')
                         span Tag filter
                         b-icon(icon='menu-down')
-                    b-dropdown-item(aria-role='listitem' :focusable="false" custom v-for='tag in tags')
+                    b-dropdown-item(aria-role='listitem' :focusable="false" custom v-for='tag in tags' :key='tag')
                         b-checkbox(:native-value='tag' v-model='filteredTags') {{ tag }}
                 div.level-item
                     b-button(type='is-primary' icon-left='plus-circle' @click='newRecipe') New recipe
@@ -39,7 +39,9 @@ import { dialogAlert, notificationSuccess } from '../utils';
 import { db } from '@/firebase';
 import { firestore } from 'firebase';
 
-type RecipeList = { [id: string]: RecipeValue };
+interface RecipeList {
+    [id: string]: RecipeValue;
+}
 
 enum SortType {
     RecentlyEdited = 0,
@@ -47,12 +49,12 @@ enum SortType {
     Cost = 2,
     Time = 3,
     Tastiness = 4,
-    Total = 5
+    Total = 5,
 }
 
 enum SortDirection {
     Descending = 0,
-    Ascending = 1
+    Ascending = 1,
 }
 
 
@@ -68,7 +70,7 @@ export default class CookbookItem extends Vue {
     private sort: SortType = SortType.RecentlyEdited;
     private sortDirection: SortDirection = SortDirection.Ascending;
 
-    private filteredTags: String[] = [];
+    private filteredTags: string[] = [];
 
     private created() {
         this.fetchData();
@@ -123,12 +125,17 @@ export default class CookbookItem extends Vue {
     }
 
     private get allowRecipeEdit(): boolean {
-        if (this.cookbook) return this.cookbook!.authorUid === this.$store.user!.uid || this.cookbook!.sharedWith.includes(this.$store.user!.email!);
+        if (this.cookbook) {
+            return this.cookbook!.authorUid === this.$store.user!.uid ||
+                this.cookbook!.sharedWith.includes(this.$store.user!.email!);
+        }
         return false;
     }
 
     private get allowRecipeDelete(): boolean {
-        if (this.cookbook) return this.cookbook!.authorUid === this.$store.user!.uid;
+        if (this.cookbook) {
+            return this.cookbook!.authorUid === this.$store.user!.uid;
+        }
         return false;
     }
 
@@ -159,24 +166,25 @@ export default class CookbookItem extends Vue {
 
     private setSort(newSort: SortType) {
         if (newSort === this.sort) {
-            this.sortDirection = this.sortDirection === SortDirection.Ascending ? SortDirection.Descending : SortDirection.Ascending;
+            this.sortDirection = this.sortDirection === SortDirection.Ascending ?
+                SortDirection.Descending : SortDirection.Ascending;
         } else {
             this.sortDirection = SortDirection.Ascending;
         }
         this.sort = newSort;
     }
 
-    private get recipes(): Array<[String, RecipeValue]> {
-        let recipeList: Array<[String, RecipeValue]> = [];
+    private get recipes(): Array<[string, RecipeValue]> {
+        let recipeList: Array<[string, RecipeValue]> = [];
 
         if (this.filteredTags.length > 0) {
-            for (let [key, val] of Object.entries(this.rawRecipes)) {
-                if (val.tags.some(r => this.filteredTags.includes(r))) {
+            for (const [key, val] of Object.entries(this.rawRecipes)) {
+                if (val.tags.some((r) => this.filteredTags.includes(r))) {
                     recipeList.push([key, val]);
                 }
             }
         } else {
-            recipeList = Object.entries(this.rawRecipes)
+            recipeList = Object.entries(this.rawRecipes);
         }
 
         recipeList = recipeList.sort((a, b) => {
@@ -216,9 +224,15 @@ export default class CookbookItem extends Vue {
                     ) / 3);
                     break;
             }
-            if (c === null || d === null) return 0;
-            if (c instanceof Date) c = c.getTime();
-            if (d instanceof Date) d = d.getTime();
+            if (c === null || d === null) {
+                return 0;
+            }
+            if (c instanceof Date) {
+                c = c.getTime();
+            }
+            if (d instanceof Date) {
+                d = d.getTime();
+            }
             if (this.sortDirection === SortDirection.Descending) {
                 return c - d;
             } else {

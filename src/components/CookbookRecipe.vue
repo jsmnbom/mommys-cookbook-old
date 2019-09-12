@@ -92,6 +92,7 @@ export default class CookbookRecipe extends Vue {
     @Prop({ type: Array, required: true }) private readonly tags!: string[];
 
     private filteredTags: string[] = [];
+    private editing = false;
 
     private filterTags(text: string) {
         this.filteredTags = this.tags.filter((tag) => {
@@ -99,11 +100,10 @@ export default class CookbookRecipe extends Vue {
         });
     }
 
-    private editing = false;
     private get total() {
         return this.value ? Math.round((
-            (10-this.value.ratings.cost) +
-            (10-this.value.ratings.time) +
+            (10 - this.value.ratings.cost) +
+            (10 - this.value.ratings.time) +
             this.value.ratings.tastiness
         ) / 3) : 0;
     }
@@ -137,8 +137,8 @@ export default class CookbookRecipe extends Vue {
         if (this.value.lastEaten) {
             const date = dayjs(this.value.lastEaten).hour(0).minute(0).second(0).millisecond(0);
             const today = dayjs().hour(0).minute(0).second(0).millisecond(0);
-            const relative = date.unix() == today.unix() ? 'today' : date.from(today);
-            return `${date.format("dddd, MMMM D, YYYY")} (${relative})`;
+            const relative = date.unix() === today.unix() ? 'today' : date.from(today);
+            return `${date.format('dddd, MMMM D, YYYY')} (${relative})`;
         } else {
             return 'Never';
         }
@@ -234,5 +234,4 @@ export default class CookbookRecipe extends Vue {
         padding: 0;
     }
 }
-
 </style>
